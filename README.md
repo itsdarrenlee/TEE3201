@@ -9,7 +9,7 @@
 The project aims to build a product named Monty, a Personal Assistant Chatbot that helps a person to keep track of various things. The name Monty was chosen as a placeholder name, in honor of the Monty Python comedy group whose work inspired the name of the the Python language. You may give it any other name and personality you wish.<br>
 <br>
 Here is a sample interaction with Monty:</p>
-```markdown
+```
 *******************************************************************************************
 *  __          __  _                            _          __  __             _           *
 *  \ \        / / | |                          | |        |  \/  |           | |          *
