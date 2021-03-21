@@ -1,5 +1,3 @@
 T,borrow book,False
 T,read book,False
-T,watch movie,False
-D,submit assignment,False,end of May
-T,plant pots,False
+D,return book,False,Monday
