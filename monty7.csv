@@ -1,5 +1,3 @@
 T,borrow book,True
 T,read book,False
 D,watch movie,False,Monday
-T,abc def,False
-D,def,False,xyz
