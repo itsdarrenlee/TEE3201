@@ -1,7 +1,3 @@
 T,borrow book,False
 T,read book,False
 D,return book,False,Monday
-D,remove paint,False,monday 2pm at miday
-D,There're two ways to check if a Python object,False,"The first way is to call the built-in function hasattr(object, name)"
-T,"Therefore, we can simply treat the list as a predicate returning a Boolean value. This solution is highly pythonic and",False
-D,This code sample is fairly well the canonical example of the difference between code that is idiomatic of Python and code that is not.,False,Even if you don't need indexes as you go
