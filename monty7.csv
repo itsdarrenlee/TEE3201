@@ -1,5 +1,3 @@
 T,borrow book,False
 T,read book,False
 D,return book,False,Monday
-T,"the trick is to use itertools, which will store it in a tuple(first element = the specific description line, 2nd element = the specific deadline line)",False
-D,"the trick is to use itertools, which will store it in a tuple",False,"the trick is to use itertools, which will store it in a tuple"
