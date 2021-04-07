@@ -93,7 +93,7 @@ STATUS | INDEX | DESCRIPTION      | DEADLINE
                     to_print = str(task)[:6] + '|' + str(i+1).center(6) + '| ' + str(task)[6:20] + \
                     ' | ' + '-' + '\n'
                     self.list_area.insert(END, to_print, output_format)
-                
+            
                 if len(str(task.description)) > 14:
                     desc_arr = self.string_splitter(desc_arr, task.description, 14)[1:]
 

@@ -1,4 +1,3 @@
 T,borrow book,False
 T,read book,False
 D,return book,False,Monday
-T,read book,False

@@ -114,15 +114,16 @@ T800 can understand the following commands:
     def __index_check(self, string):
         try:
             index = int(string.strip())
-        except Exception:
-            raise ValueError("'" + string + "'" + ' is not a number')
+        except ValueError as ve:
+            raise Exception('"{}" is not a number'.format(string)) from ve
         if index < 1:
-            raise ValueError('Index must be greater than 0')
+            raise Exception('Index must be greater than 0')
         try:
             if self.items[index - 1]:
                 return index - 1
-        except IndexError:
-            raise ValueError('No item at index ' + string)
+        except IndexError as ie:
+            raise Exception('No item at index: {}'.format(string)) from ie
+            
             
     def delete_item(self, user_input):
         try:
