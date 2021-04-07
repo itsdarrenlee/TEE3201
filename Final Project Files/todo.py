@@ -29,7 +29,3 @@ class ToDo:
         suitable to be stored in a csv file.
         """
         return [self.TYPE_KEY, self.description, 'done' if self.is_done else 'pending']
-    
-    def as_item(self):
-        """ Return the name of the item as a string."""
-        return self.description
