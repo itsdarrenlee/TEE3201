@@ -37,6 +37,11 @@ T800 can understand the following commands:
     Shows the help information
   progress
     Shows the progress of the current tasks
+  mass TASK INDEX + **More if needed
+    Performs either done, pending or delete \
+    of tasks simultaneously. Space is required in between
+    each task.
+    Example: pending 1 3 4
 --------------------------------------------"""
     
     def load_data(self):
@@ -53,10 +58,13 @@ T800 can understand the following commands:
         open(self.filename, 'a').close()
         
     def __load_item_from_csv_line(self, row):
-        if row[0] == 'T':
-            self.items.append(td.ToDo(row[1], True if row[2] == 'True' else False))
-        elif row[0] == 'D':
-            self.items.append(dl.Deadline(row[1], True if row[2] == 'True' else False, row[3]))
+        try:
+            if row[0] == 'T':
+                self.items.append(td.ToDo(row[1], True if row[2] == 'True' else False))
+            elif row[0] == 'D':
+                self.items.append(dl.Deadline(row[1], True if row[2] == 'True' else False, row[3]))
+        except IndexError:
+            raise IndexError
         return
     
     def save_data(self):
@@ -74,8 +82,8 @@ T800 can understand the following commands:
         try:
             self.items.append(td.ToDo(command_parts[1], False))
             return ("New item: " + "'" + command_parts[1] + "'" + " added")
-        except IndexError:
-                raise IndexError("INPUT: todo \"task\"")
+        except IndexError as ie:
+            raise IndexError("INPUT: todo \"task\"") from ie
         
     def add_deadline_item(self, user_input):
         command_parts = user_input.strip().split(' ', 1)
@@ -83,13 +91,13 @@ T800 can understand the following commands:
             due = command_parts[1].partition("by:")[2].strip()
             task = command_parts[1].partition("by:")[0].strip()
             if due == "" or task == "":
-                raise ex.InvalidInputError
+                raise ex.BlankInputError
             self.items.append(dl.Deadline(task, False, due))
             return ("New item: " + "'" + task + "'" + " added. " + "Deadline: " + "'" + due + "'")
-        except ex.InvalidInputError:
-            raise ex.InvalidInputError("INPUT: deadline \"task\" by: \"due date\"")
-        except IndexError:
-            raise IndexError("No deadline task provided")
+        except ex.BlankInputError:
+            raise ex.BlankInputError("INPUT: deadline \"task\" by: \"due date\"")
+        except IndexError as ie:
+            raise IndexError("No deadline task provided") from ie
             
     def mark_item_as_done(self, user_input):
         index_as_string = user_input[5:].strip()
@@ -97,7 +105,7 @@ T800 can understand the following commands:
         for i, obj in enumerate(self.items):
             if i == index_to_remove:
                 if obj.is_done:
-                    return ("Item: " + "'" + obj.description + "'" + " has been done already!")
+                    return ("Item: " + "'" + obj.description + "'" + " has been done already")
                 obj.mark_as_done()
                 return ("Item: " + "'" + obj.description + "'" + " marked as done")
             
@@ -107,7 +115,7 @@ T800 can understand the following commands:
         for i, obj in enumerate(self.items):
             if i == index_to_remove:
                 if not obj.is_done:
-                    return ("Item: " + "'" + obj.description + "'" + " is already pending!")
+                    return ("Item: " + "'" + obj.description + "'" + " is already pending")
                 obj.mark_as_pending()
                 return ("Item: " + "'" + obj.description + "'" + " marked as pending")
     
@@ -115,14 +123,14 @@ T800 can understand the following commands:
         try:
             index = int(string.strip())
         except ValueError as ve:
-            raise Exception('"{}" is not a number'.format(string)) from ve
+            raise ValueError('"{}" is not a number'.format(string)) from ve
         if index < 1:
-            raise Exception('Index must be greater than 0')
+            raise ex.ZeroInputError('Index must be greater than 0')
         try:
             if self.items[index - 1]:
                 return index - 1
         except IndexError as ie:
-            raise Exception('No item at index: {}'.format(string)) from ie
+            raise IndexError('No item at index: {}'.format(string)) from ie
             
             
     def delete_item(self, user_input):
@@ -167,7 +175,10 @@ T800 can understand the following commands:
         str_arr.sort(reverse=True)
         for i in str_arr:
             self.execute_command(back_string + str(i))
-        return ("Executed mass action '{}' on items {}!".format(back_string.strip(), [i for i in str_arr]))
+        if str_arr:
+            return ("Executed mass action '{}' on items {}!".format(back_string.strip(), [i for i in str_arr]))
+        else:
+            return ("Nothing was done! Check your input.")
         
     def execute_command(self, command):
         if command == 'help':

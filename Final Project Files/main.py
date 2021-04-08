@@ -58,12 +58,7 @@ class GUI:
     
     def update_task_list(self, tasks):
         self.list_area.delete('1.0', END)  # clear the list area
-        if len(tasks) == 0:
-            output_format = 'normal_format'
-            self.list_area.insert(END, '>>> Nothing to list', output_format)
-        else:
-            output_format = 'normal_format'
-            self.list_area.insert(END, """           ______         __                  
+        self.list_area.insert(END, """           ______         __                  
           /_  __/__ ____ / /__                
            / / / _ `(_-</  '_/                
   ______  /_/  \_,_/___/_/\_\     __          
@@ -71,9 +66,14 @@ class GUI:
   / / / -_) __/  ' \/ / _ \/ _ `/ __/ _ \/ __/
  /_/  \__/_/ /_/_/_/_/_//_/\_,_/\__/\___/_/   
 \n""")
-            self.list_area.insert(END, """==============================================
+        self.list_area.insert(END, """==============================================
 STATUS | INDEX | DESCRIPTION      | DEADLINE
 ----------------------------------------------\n""")
+        if len(tasks) == 0:
+            output_format = 'normal_format'
+            self.list_area.insert(END, '>>> Nothing to list', output_format)
+        else:
+            output_format = 'normal_format'
             
             for i, task in enumerate(tasks):
                 output_format = 'done_format' if task.is_done else 'pending_format'
@@ -103,6 +103,7 @@ STATUS | INDEX | DESCRIPTION      | DEADLINE
                     self.list_area.insert(END, to_print, output_format)
             self.list_area.insert(END, """----------------------------------------------\n""")
                       
+    
     def clear_input_box(self):
         self.input_box.delete(0, END)
     
