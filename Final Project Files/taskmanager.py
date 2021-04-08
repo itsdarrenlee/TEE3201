@@ -13,6 +13,15 @@ class TaskManager:
         self.items = TaskManager.items
     
     def get_help(self):
+        """
+        Generates the list of commands available
+        for T800.
+
+        Returns
+        -------
+        None.
+
+        """
         return """============================================
 T800 can understand the following commands:
 
@@ -45,6 +54,19 @@ T800 can understand the following commands:
 --------------------------------------------"""
     
     def load_data(self):
+        """
+        Loads data from csv specified in Class attribute.
+        
+        If csv does not exist, a new CSV file is created
+        in the same directory as main. 
+        
+        Items are loaded from CSV into the item list, a TaskManager attribute.
+
+        Returns
+        -------
+        None.
+
+        """
         TaskManager.__create_file_if_missing(self)
         with open(self.filename, 'r') as csvfile:
             file_handler = csv.reader(csvfile)
@@ -55,9 +77,44 @@ T800 can understand the following commands:
             return
 
     def __create_file_if_missing(self):
-        open(self.filename, 'a').close()
+        """
+        Creates a file specified in TaskManager attribute. 
+        
+        If the named csv file is open in excel, notepad, etc, A permission error is
+        raised to console.
+
+        Returns
+        -------
+        None.
+
+        """
+        try:
+            open(self.filename, 'a').close()
+        except PermissionError as pe:
+            raise PermissionError("Error creating file, check permissions.") from pe
+        
         
     def __load_item_from_csv_line(self, row):
+        """
+        From the specified CSV, it will read the CSV row by row and create todo
+        and deadline objects respectively.
+
+        Parameters
+        ----------
+        row : Each line in CSV passed from csv_reader
+            If CSV line starts with 'T', create ToDo instance, else
+            if line starts with 'D', create Deadline instance.
+
+        Raises
+        ------
+        IndexError
+            Raises IndexError if unable to get indexes of row.
+
+        Returns
+        -------
+        None.
+
+        """
         try:
             if row[0] == 'T':
                 self.items.append(td.ToDo(row[1], True if row[2] == 'True' else False))
