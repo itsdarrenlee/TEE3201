@@ -1,0 +1,4 @@
+T,read book,True
+D,return book,False,Tuesday
+T,watch movie,False
+T,abc,False

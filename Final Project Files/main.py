@@ -119,7 +119,7 @@ STATUS | INDEX | DESCRIPTION      | DEADLINE
             self.clear_input_box()
             self.task_manager.save_data()
         except Exception as e:
-            self.update_chat_history(command, str(e) + '\n' + self.task_manager.get_help(), 'error_format')
+            self.update_chat_history(command, str(e) + '\n', 'error_format')# + self.task_manager.get_help(), 'error_format')
 
     def start(self):
         self.window.mainloop()

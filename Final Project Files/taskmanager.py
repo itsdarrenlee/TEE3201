@@ -30,7 +30,7 @@ T800 can understand the following commands:
     Example: todo read book
   deadline DESCRIPTION "by:" DEADLINE
     Adds a task with deadline to the list
-    Example: deadline submit assignment by: end of May
+    Example: deadline read book by: Tuesday
   done INDEX
     Marks the task at INDEX as 'done'
     Example: done 1
@@ -47,9 +47,9 @@ T800 can understand the following commands:
   progress
     Shows the progress of the current tasks
   mass TASK INDEX + **More if needed
-    Performs either done, pending or delete \
-    of tasks simultaneously. Space is required in between
-    each task.
+    Performs either done, pending or delete
+    of tasks simultaneously. 
+    Space is required in between each task.
     Example: pending 1 3 4
 --------------------------------------------"""
     
@@ -154,7 +154,7 @@ T800 can understand the following commands:
         except ex.BlankInputError:
             raise ex.BlankInputError("INPUT: deadline \"task\" by: \"due date\"")
         except IndexError as ie:
-            raise IndexError("No deadline task provided") from ie
+            raise IndexError("ERROR: No deadline task provided") from ie
             
     def mark_item_as_done(self, user_input):
         index_as_string = user_input[5:].strip()
