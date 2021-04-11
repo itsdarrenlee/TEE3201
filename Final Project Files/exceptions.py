@@ -9,3 +9,7 @@ class BlankInputError(Error):
 class ZeroInputError(Error):
     """Raised when the input is 0"""
     pass
+
+class InvalidMassInputError(Error):
+    """Raised when nothing was done in a mass action command"""
+    pass

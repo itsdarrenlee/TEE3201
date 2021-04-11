@@ -1,4 +1,7 @@
-T,read book,True
-D,return book,False,Tuesday
-T,watch movie,False
+D,read book,True,monday
+T,abcasdf,False
 T,abc,False
+D,asdf,False,asdfadf
+T,read BooK,False
+T,read book,False
+D,abc,False,a

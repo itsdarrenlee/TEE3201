@@ -2,6 +2,7 @@ import csv
 import deadline as dl
 import todo as td
 import exceptions as ex
+import re
 
 class TaskManager:
     
@@ -218,12 +219,14 @@ T800 can understand the following commands:
     
     def mass(self, user_input):
         command = user_input[5:].strip()
-        if command.startswith('delete'):
-            return self.mass_execute(command, self.delete_item, 7)
-        if command.startswith('done'):
-            return self.mass_execute(command, self.mark_item_as_done, 5)
-        if command.startswith('pending'):
-            return self.mass_execute(command, self.mark_item_as_pending, 8)
+        if re.search("\Adelete", command[:6], re.IGNORECASE):
+            return self.mass_execute(command,lower(), self.delete_item, 7)
+        elif re.search("\Adone", command[:4], re.IGNORECASE):
+            return self.mass_execute(command.lower(), self.mark_item_as_done, 5)
+        elif re.search("\Apending", command[:7], re.IGNORECASE):
+            return self.mass_execute(command.lower(), self.mark_item_as_pending, 8)
+        else:
+            raise ex.InvalidMassInputError("INPUT: 'mass' + command + args**")
             
     def mass_execute(self, command, function_name, strip_len):
         string = command[strip_len:]
@@ -235,24 +238,24 @@ T800 can understand the following commands:
         if str_arr:
             return ("Executed mass action '{}' on items {}!".format(back_string.strip(), [i for i in str_arr]))
         else:
-            return ("Nothing was done! Check your input.")
+            raise ex.InvalidMassInputError("Nothing was done! Check your input.")
         
     def execute_command(self, command):
-        if command == 'help':
+        if re.search("\Ahelp", command[:4], re.IGNORECASE):
             return self.get_help()
-        elif command == 'progress':
+        elif re.search("\Aprogress", command[:8], re.IGNORECASE):
             return self.get_current_progress()
-        elif command.startswith('todo'):
+        elif re.search("\Atodo", command[:4], re.IGNORECASE):
             return self.add_item(command)
-        elif command.startswith('deadline'):
+        elif re.search("\Adeadline", command[:8], re.IGNORECASE):
             return self.add_deadline_item(command)
-        elif command.startswith('done'):
+        elif re.search("\Adone", command[:4], re.IGNORECASE):
             return self.mark_item_as_done(command)
-        elif command.startswith('pending'):
+        elif re.search("\Apending", command[:7], re.IGNORECASE):
             return self.mark_item_as_pending(command)
-        elif command.startswith('delete'):
+        elif re.search("\Adelete", command[:6], re.IGNORECASE):
             return self.delete_item(command)
-        elif command.startswith('mass'):
+        elif re.search("\Amass", command[:4], re.IGNORECASE):
             return self.mass(command)
         else:
-            raise Exception('Command not recognized')
+            raise Exception('Command not recognized')                 
