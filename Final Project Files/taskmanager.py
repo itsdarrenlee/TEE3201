@@ -220,7 +220,7 @@ T800 can understand the following commands:
     def mass(self, user_input):
         command = user_input[5:].strip()
         if re.search("\Adelete", command[:6], re.IGNORECASE):
-            return self.mass_execute(command,lower(), self.delete_item, 7)
+            return self.mass_execute(command.lower(), self.delete_item, 7)
         elif re.search("\Adone", command[:4], re.IGNORECASE):
             return self.mass_execute(command.lower(), self.mark_item_as_done, 5)
         elif re.search("\Apending", command[:7], re.IGNORECASE):
