@@ -143,19 +143,37 @@ T800 can understand the following commands:
         except IndexError as ie:
             raise IndexError("INPUT: todo \"task\"") from ie
         
-    def add_deadline_item(self, user_input):
-        command_parts = user_input.strip().split(' ', 1)
-        try:
-            due = command_parts[1].partition("by:")[2].strip()
-            task = command_parts[1].partition("by:")[0].strip()
-            if due == "" or task == "":
-                raise ex.BlankInputError
+    # def add_deadline_item(self, user_input):
+    #     command_parts = user_input.strip().split(' ', 1)
+    #     try:
+    #         due = command_parts[1].partition("by:")[2].strip()
+    #         task = command_parts[1].partition("by:")[0].strip()
+    #         if due == "" or task == "":
+    #             raise ex.BlankInputError
+    #         self.items.append(dl.Deadline(task, False, due))
+    #         return ("New item: " + "'" + task + "'" + " added. " + "Deadline: " + "'" + due + "'")
+    #     except ex.BlankInputError:
+    #         raise ex.BlankInputError("INPUT: deadline \"task\" by: \"due date\"")
+    #     except IndexError as ie:
+    #         raise IndexError("ERROR: No deadline task provided") from ie
+            
+    def add_deadline_item(self, user_input):  
+        if re.search(" by:", user_input, re.IGNORECASE):
+            command_parts = user_input.strip().split(' ', 1)
+            arr = re.split("by:", command_parts[1], 1, re.IGNORECASE)
+            (task, due) = [x.strip() for x in arr]
+            
+            if not due and not task:
+                raise ex.NoDueNoTaskError("INPUT: deadline \"task\" by: \"due date\"")
+            elif not due:
+                raise ex.NoDueDateError("No due date provided! INPUT: deadline \"task\" by: \"due date\"" )
+            elif not task:
+                raise ex.NoTaskError("Provide a task! INPUT: deadline \"task\" by: \"due date\"")
+    
             self.items.append(dl.Deadline(task, False, due))
             return ("New item: " + "'" + task + "'" + " added. " + "Deadline: " + "'" + due + "'")
-        except ex.BlankInputError:
-            raise ex.BlankInputError("INPUT: deadline \"task\" by: \"due date\"")
-        except IndexError as ie:
-            raise IndexError("ERROR: No deadline task provided") from ie
+        else:
+            raise ex.InvalidDeadlineInput("Missing 'by' keyword! INPUT: deadline \"task\" by: \"due date\"")
             
     def mark_item_as_done(self, user_input):
         index_as_string = user_input[5:].strip()

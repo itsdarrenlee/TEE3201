@@ -2,6 +2,7 @@ import unittest
 import todo as td
 import deadline as dl
 import exceptions as ex
+import re
 
 items = []
 
@@ -20,19 +21,39 @@ def add_item(user_input):
 # check for 'deadline' is done at an earlier stage. It is assumed
 # that user_input for add_deadline_item() will be prefixed with 'deadline'
 
+# def add_deadline_item(user_input):
+#     command_parts = user_input.strip().split(' ', 1)
+#     try:
+#         due = command_parts[1].partition("by:")[2].strip()
+#         task = command_parts[1].partition("by:")[0].strip()
+#         if due == "" or task == "":
+#             raise ex.BlankInputError
+#         items.append(dl.Deadline(task, False, due))
+#         return ("New item: " + "'" + task + "'" + " added. " + "Deadline: " + "'" + due + "'")
+#     except ex.BlankInputError:
+#         raise ex.BlankInputError("INPUT: deadline \"task\" by: \"due date\"")
+#     except IndexError as ie:
+#         raise IndexError("No deadline task provided") from ie
+
 def add_deadline_item(user_input):
-    command_parts = user_input.strip().split(' ', 1)
-    try:
-        due = command_parts[1].partition("by:")[2].strip()
-        task = command_parts[1].partition("by:")[0].strip()
-        if due == "" or task == "":
-            raise ex.BlankInputError
+    if re.search(" by:", user_input, re.IGNORECASE):
+        command_parts = user_input.strip().split(' ', 1)
+        arr = re.split("by:", command_parts[1], 1, re.IGNORECASE)
+        (task, due) = [x.strip() for x in arr]
+        
+        if not due and not task:
+            raise ex.NoDueNoTaskError("INPUT: deadline \"task\" by: \"due date\"")
+        elif not due:
+            raise ex.NoDueDateError("No due date provided! INPUT: deadline \"task\" by: \"due date\"" )
+        elif not task:
+            raise ex.NoTaskError("Provide a task! INPUT: deadline \"task\" by: \"due date\"")
+            
+            
         items.append(dl.Deadline(task, False, due))
         return ("New item: " + "'" + task + "'" + " added. " + "Deadline: " + "'" + due + "'")
-    except ex.BlankInputError:
-        raise ex.BlankInputError("INPUT: deadline \"task\" by: \"due date\"")
-    except IndexError as ie:
-        raise IndexError("No deadline task provided") from ie         
+    else:
+        raise ex.InvalidDeadlineInput("Missing 'by' keyword! INPUT: deadline \"task\" by: \"due date\"")         
+
 
 # test class
 class TestSearch(unittest.TestCase):
@@ -54,20 +75,21 @@ class TestSearch(unittest.TestCase):
                          , "New item: '123' added. Deadline: '567'")
         self.assertEqual(add_deadline_item("deadline deadline by: deadline")
                          , "New item: 'deadline' added. Deadline: 'deadline'")
-        self.assertEqual(add_deadline_item("deadline !@#$% by: ((*&^))")
+        self.assertEqual(add_deadline_item("deadline !@#$% by:       ((*&^))      ")
                          , "New item: '!@#$%' added. Deadline: '((*&^))'")
+     
         
-        with self.assertRaises(IndexError):
+        with self.assertRaises(ex.InvalidDeadlineInput):
             add_deadline_item("deadline")
-        with self.assertRaises(ex.BlankInputError):
+        with self.assertRaises(ex.NoTaskError):
             add_deadline_item("deadline by: foo")
-        with self.assertRaises(ex.BlankInputError):
+        with self.assertRaises(ex.NoDueDateError):
             add_deadline_item("deadline foo by: ")
-        with self.assertRaises(ex.BlankInputError):
+        with self.assertRaises(ex.NoDueNoTaskError):
             add_deadline_item("deadline by: ")
-        with self.assertRaises(ex.BlankInputError):
+        with self.assertRaises(ex.NoTaskError):
             add_deadline_item("deadline by: by:")
-        with self.assertRaises(ex.BlankInputError):
+        with self.assertRaises(ex.InvalidDeadlineInput):
             add_deadline_item("deadline foo by")
         
 # activate the test runner
