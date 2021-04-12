@@ -1,17 +1,8 @@
 D,read book,True,monday
-T,abcasdf,False
+T,borrow book,False
+D,watch movie,False,2pm
 T,abc,False
-D,asdf,False,asdfadf
-T,read BooK,False
-T,read book,False
-D,abc,False,a
-D,!,False,2
-D,123,False,e
-D,123,False,e
-D,ssssssssssssssss,False,e
-D,eat apple,False,tues
-D,as,False,e
-D,1,False,e
-D,e,False,e
-D,22,False,2
-D,s,False,s
+T,def,False
+T,abc,False
+T,abc,False
+D,abc,False,s

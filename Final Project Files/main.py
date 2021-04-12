@@ -112,6 +112,7 @@ STATUS | INDEX | DESCRIPTION      | DEADLINE
         try:
             command = self.input_box.get().strip()
             if command.lower() == 'exit':
+                self.window.destroy()
                 sys.exit()
             output = self.task_manager.execute_command(command)
             self.update_chat_history(command, output, 'success_format')

@@ -17,24 +17,6 @@ def add_item(user_input):
        except IndexError as ie:
            raise IndexError("INPUT: todo \"task\"") from ie
           
-           
-# check for 'deadline' is done at an earlier stage. It is assumed
-# that user_input for add_deadline_item() will be prefixed with 'deadline'
-
-# def add_deadline_item(user_input):
-#     command_parts = user_input.strip().split(' ', 1)
-#     try:
-#         due = command_parts[1].partition("by:")[2].strip()
-#         task = command_parts[1].partition("by:")[0].strip()
-#         if due == "" or task == "":
-#             raise ex.BlankInputError
-#         items.append(dl.Deadline(task, False, due))
-#         return ("New item: " + "'" + task + "'" + " added. " + "Deadline: " + "'" + due + "'")
-#     except ex.BlankInputError:
-#         raise ex.BlankInputError("INPUT: deadline \"task\" by: \"due date\"")
-#     except IndexError as ie:
-#         raise IndexError("No deadline task provided") from ie
-
 def add_deadline_item(user_input):
     if re.search(" by:", user_input, re.IGNORECASE):
         command_parts = user_input.strip().split(' ', 1)
@@ -53,7 +35,6 @@ def add_deadline_item(user_input):
         return ("New item: " + "'" + task + "'" + " added. " + "Deadline: " + "'" + due + "'")
     else:
         raise ex.InvalidDeadlineInput("Missing 'by' keyword! INPUT: deadline \"task\" by: \"due date\"")         
-
 
 # test class
 class TestSearch(unittest.TestCase):
