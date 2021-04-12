@@ -48,7 +48,7 @@ class GUI:
         self.history_area.insert(1.0, 'You said: ' + str(command) + '\n', 'normal_format')
         self.history_area.insert(1.0, current_time + '\n', 'normal_format')
 
-    def string_splitter(self, arr, string, split_length):
+    def __string_splitter(self, arr, string, split_length):
         if len(string) < split_length:
             arr.append(string)
             return arr
@@ -81,21 +81,20 @@ STATUS | INDEX | DESCRIPTION      | DEADLINE
                 deadline_arr = []
                 desc_arr = []
                 
-                
                 if isinstance(task, dl.Deadline):
                     to_print = str(task)[:6] + '|' + str(i+1).center(6) + '| ' + str(task)[6:20] + \
                     ' | ' + str(task.by)[:8] + '\n'
                     self.list_area.insert(END, to_print, output_format)
                     
                     if len(str(task.by)) > 8:
-                        deadline_arr = self.string_splitter(deadline_arr, task.by, 8) [1:]
+                        deadline_arr = self.__string_splitter(deadline_arr, task.by, 8) [1:]
                 else:
                     to_print = str(task)[:6] + '|' + str(i+1).center(6) + '| ' + str(task)[6:20] + \
                     ' | ' + '-' + '\n'
                     self.list_area.insert(END, to_print, output_format)
             
                 if len(str(task.description)) > 14:
-                    desc_arr = self.string_splitter(desc_arr, task.description, 14)[1:]
+                    desc_arr = self.__string_splitter(desc_arr, task.description, 14)[1:]
 
             
                 for combination in itertools.zip_longest(desc_arr, deadline_arr, fillvalue=""):                    
