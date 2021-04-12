@@ -81,7 +81,7 @@ T800 can understand the following commands:
         """
         Creates a file specified in TaskManager attribute. 
         
-        If the named csv file is open in excel, notepad, etc, A permission error is
+        If the named csv file is locked for editing, a permission error is
         raised to console.
 
         Returns
@@ -126,6 +126,14 @@ T800 can understand the following commands:
         return
     
     def save_data(self):
+        """
+        Method to save data to external CSV specified in attribute.
+
+        Returns
+        -------
+        None.
+
+        """
         with open(self.filename, "w", newline='') as csvfile:
             output = csv.writer(csvfile)
             for item in self.items:
@@ -136,28 +144,61 @@ T800 can understand the following commands:
                 output.writerow(output_to_file)
     
     def add_item(self, user_input):
+        """
+        Adds a 'ToDo' type item into the local list.
+
+        Parameters
+        ----------
+        user_input:
+            All input after keyword 'todo' is considered valid.
+
+        Raises
+        ------
+        IndexError
+            If user provides blank input, indexerror will catch
+            exception.
+
+        Returns
+        -------
+        Prints to GUI information on task added.
+
+        """
         command_parts = user_input.strip().split(' ', 1)
         try:
             self.items.append(td.ToDo(command_parts[1], False))
             return ("New item: " + "'" + command_parts[1] + "'" + " added")
         except IndexError as ie:
             raise IndexError("INPUT: todo \"task\"") from ie
-        
-    # def add_deadline_item(self, user_input):
-    #     command_parts = user_input.strip().split(' ', 1)
-    #     try:
-    #         due = command_parts[1].partition("by:")[2].strip()
-    #         task = command_parts[1].partition("by:")[0].strip()
-    #         if due == "" or task == "":
-    #             raise ex.BlankInputError
-    #         self.items.append(dl.Deadline(task, False, due))
-    #         return ("New item: " + "'" + task + "'" + " added. " + "Deadline: " + "'" + due + "'")
-    #     except ex.BlankInputError:
-    #         raise ex.BlankInputError("INPUT: deadline \"task\" by: \"due date\"")
-    #     except IndexError as ie:
-    #         raise IndexError("ERROR: No deadline task provided") from ie
+
             
-    def add_deadline_item(self, user_input):  
+    def add_deadline_item(self, user_input):
+        """
+        Adds a 'Deadline' type item into the list.
+
+        Parameters
+        ----------
+        user_input : Requires a keyword 'by:'
+            All input after keyword 'deadline' is considered valid.
+
+        Raises
+        ------
+        InvalidDeadlineInput:
+            When 'by' keyword is not present in input (case insensitive)
+            
+        NoTaskError:
+            When no task is provided but 'by:' keyword is present
+        
+        NoDueDateError:
+            When no due date is provided but 'by:' keyword is present
+            
+        NoDueNoTaskError:
+            When both task & due date is not provided but keyword is present
+
+        Returns
+        -------
+        Prints to GUI information on task added.
+
+        """
         if re.search(" by:", user_input, re.IGNORECASE):
             command_parts = user_input.strip().split(' ', 1)
             arr = re.split("by:", command_parts[1], 1, re.IGNORECASE)
@@ -176,6 +217,7 @@ T800 can understand the following commands:
             raise ex.InvalidDeadlineInput("Missing 'by' keyword! INPUT: deadline \"task\" by: \"due date\"")
             
     def mark_item_as_done(self, user_input):
+        
         index_as_string = user_input[5:].strip()
         index_to_remove = self.__index_check(index_as_string)
         for i, obj in enumerate(self.items):
