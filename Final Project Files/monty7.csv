@@ -1,3 +1,3 @@
-T,read book,True
-T,do assignment,True
-D,eat lunch,True,12pm
+T,read book,False
+T,do assignment,False
+D,eat lunch,False,12pm

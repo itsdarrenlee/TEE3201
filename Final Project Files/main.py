@@ -4,6 +4,7 @@ import itertools
 import sys
 import deadline as dl
 import taskmanager as tm
+import userinterface as ui
 
 class GUI:
 
@@ -49,18 +50,21 @@ class GUI:
         self.history_area.insert(1.0, current_time + '\n', 'normal_format')
     
     def update_task_list(self, tasks):
+        self.ui = ui.UserInterface()
+        
         self.list_area.delete('1.0', END)  # clear the list area
-        self.list_area.insert(END, """           ______         __                  
-          /_  __/__ ____ / /__                
-           / / / _ `(_-</  '_/                
-  ______  /_/  \_,_/___/_/\_\     __          
- /_  __/__ ______ _  (_)__  ___ _/ /____  ____
-  / / / -_) __/  ' \/ / _ \/ _ `/ __/ _ \/ __/
- /_/  \__/_/ /_/_/_/_/_//_/\_,_/\__/\___/_/   
-\n""")
-        self.list_area.insert(END, """==============================================
-STATUS | INDEX | DESCRIPTION      | DEADLINE
-----------------------------------------------\n""")
+#         self.list_area.insert(END, """           ______         __                  
+#           /_  __/__ ____ / /__                
+#            / / / _ `(_-</  '_/                
+#   ______  /_/  \_,_/___/_/\_\     __          
+#  /_  __/__ ______ _  (_)__  ___ _/ /____  ____
+#   / / / -_) __/  ' \/ / _ \/ _ `/ __/ _ \/ __/
+#  /_/  \__/_/ /_/_/_/_/_//_/\_,_/\__/\___/_/   
+# \n""")
+#         self.list_area.insert(END, """==============================================
+# STATUS | INDEX | DESCRIPTION      | DEADLINE
+# ----------------------------------------------\n""")
+        self.list_area.insert(END, 
         if len(tasks) == 0:
             output_format = 'normal_format'
             self.list_area.insert(END, '>>> Nothing to list', output_format)
