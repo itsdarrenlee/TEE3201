@@ -2,8 +2,6 @@
 
 class UserInterface():
     
-    userInput = ""
-    
     def __init__(self):
         return
 
@@ -19,15 +17,9 @@ class UserInterface():
 STATUS | INDEX | DESCRIPTION      | DEADLINE
 ----------------------------------------------\n""")
         
-    
-    def read_command(self):
-        print(">>> What can I do for you?\n")
-        return input()
-        
-    def display(self, screenOutput):
-        print(screenOutput)
-        
-    def get_help(self):
+
+    @staticmethod
+    def get_help():
         """
         Generates the list of commands available
         for T800.
@@ -68,4 +60,8 @@ T800 can understand the following commands:
     of tasks simultaneously. 
     Space is required in between each task.
     Example: pending 1 3 4
-==========================================""")      
+  find TASK
+    Searchs the task list for tasks
+    matching your description.
+    Results are case-insensitive!
+==========================================""")

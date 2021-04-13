@@ -9,6 +9,10 @@ import userinterface as ui
 class GUI:
 
     def __init__(self, task_manager):
+        
+        # create ui class instance
+        self.ui_object = ui.UserInterface()
+        
         self.task_manager = task_manager
         self.window = Tk()
         self.window.geometry('800x700')  # set Window size
@@ -36,7 +40,7 @@ class GUI:
 
         # show the welcome message and the list of tasks
         self.update_chat_history('start', 'Welcome to T800!', 'success_format')
-        self.update_task_list(self.task_manager.items)
+        self.update_task_list(self.task_manager.items, self.ui_object)
 
     def update_chat_history(self, command, response, status_format):
         """
@@ -49,53 +53,42 @@ class GUI:
         self.history_area.insert(1.0, 'You said: ' + str(command) + '\n', 'normal_format')
         self.history_area.insert(1.0, current_time + '\n', 'normal_format')
     
-    def update_task_list(self, tasks):
-        self.ui = ui.UserInterface()
+    def update_task_list(self, tasks, ui_object):
         
         self.list_area.delete('1.0', END)  # clear the list area
-#         self.list_area.insert(END, """           ______         __                  
-#           /_  __/__ ____ / /__                
-#            / / / _ `(_-</  '_/                
-#   ______  /_/  \_,_/___/_/\_\     __          
-#  /_  __/__ ______ _  (_)__  ___ _/ /____  ____
-#   / / / -_) __/  ' \/ / _ \/ _ `/ __/ _ \/ __/
-#  /_/  \__/_/ /_/_/_/_/_//_/\_,_/\__/\___/_/   
-# \n""")
-#         self.list_area.insert(END, """==============================================
-# STATUS | INDEX | DESCRIPTION      | DEADLINE
-# ----------------------------------------------\n""")
-        self.list_area.insert(END, 
+        self.list_area.insert(END, self.ui_object.show_greeting())
         if len(tasks) == 0:
-            output_format = 'normal_format'
-            self.list_area.insert(END, '>>> Nothing to list', output_format)
+            self.list_area.insert(END, '>>> Nothing to list', 'normal_format')
         else:
-            output_format = 'normal_format'
+            self.__overflow_print(tasks)            
+    
+    def __overflow_print(self, tasks):
+        for i, task in enumerate(tasks):
+            output_format = 'done_format' if task.is_done else 'pending_format'
             
-            for i, task in enumerate(tasks):
-                output_format = 'done_format' if task.is_done else 'pending_format'
-                
-                deadline_arr = []
-                desc_arr = []
-                
-                if isinstance(task, dl.Deadline):
-                    to_print = str(task)[:6] + '|' + str(i+1).center(6) + '| ' + str(task)[6:20] + \
-                    ' | ' + str(task.by)[:8] + '\n'
-                    self.list_area.insert(END, to_print, output_format) # print first 8 chars of 'deadline' only
-                    
-                    if len(str(task.by)) > 8:
-                        deadline_arr = self.__string_splitter(deadline_arr, task.by, 8) [1:] # if longer than 8 char, split string
-                else:
-                    to_print = str(task)[:6] + '|' + str(i+1).center(6) + '| ' + str(task)[6:20] + \
-                    ' | ' + '-' + '\n'
-                    self.list_area.insert(END, to_print, output_format) # print first 14 chars of 'deadline' only
+            deadline_arr = []
+            desc_arr = []
             
-                if len(str(task.description)) > 14:
-                    desc_arr = self.__string_splitter(desc_arr, task.description, 14)[1:] # if longer than 14 char, split string
+            if isinstance(task, dl.Deadline):
+                to_print = str(task)[:6] + '|' + str(i+1).center(6) + '| ' + str(task)[6:20] + \
+                ' | ' + str(task.by)[:8] + '\n'
+                self.list_area.insert(END, to_print, output_format) # print first 8 chars of 'deadline' only
+                
+                if len(str(task.by)) > 8:
+                    deadline_arr = self.__string_splitter(deadline_arr, task.by, 8) [1:] # if longer than 8 char, split string
+            else:
+                to_print = str(task)[:6] + '|' + str(i+1).center(6) + '| ' + str(task)[6:20] + \
+                ' | ' + '-' + '\n'
+                self.list_area.insert(END, to_print, output_format) # print first 14 chars of 'deadline' only
+        
+            if len(str(task.description)) > 14:
+                desc_arr = self.__string_splitter(desc_arr, task.description, 14)[1:] # if longer than 14 char, split string
 
-                for combination in itertools.zip_longest(desc_arr, deadline_arr, fillvalue=""):                    
-                    to_print = " "*15 + combination[0].ljust(14) + " "*3 + combination[1].ljust(8)  + '\n'
-                    self.list_area.insert(END, to_print, output_format) # iterate thru 2 lists simultanously, filling up diff with ""
-            self.list_area.insert(END, """----------------------------------------------\n""")
+            for combination in itertools.zip_longest(desc_arr, deadline_arr, fillvalue=""):                    
+                to_print = " "*15 + combination[0].ljust(14) + " "*3 + combination[1].ljust(8)  + '\n'
+                self.list_area.insert(END, to_print, output_format) # iterate thru 2 lists simultanously, filling up diff with ""
+        self.list_area.insert(END, """----------------------------------------------\n""")
+        
     
     def __string_splitter(self, arr, string, split_length):
         """ Recursively splits the string greedily in length specified by split_length"""
@@ -118,7 +111,7 @@ class GUI:
                 sys.exit()
             output = self.task_manager.execute_command(command)
             self.update_chat_history(command, output, 'success_format')
-            self.update_task_list(self.task_manager.items)
+            self.update_task_list(self.task_manager.items, self.ui_object)
             self.clear_input_box()
             self.task_manager.save_data()
         except Exception as e:

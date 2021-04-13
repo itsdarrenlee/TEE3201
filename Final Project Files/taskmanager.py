@@ -4,6 +4,8 @@ import todo as td
 import exceptions as ex
 import storagemanager as sm
 
+import userinterface as ui
+
 FILENAME = 'monty7.csv'
 
 class TaskManager:
@@ -17,52 +19,9 @@ class TaskManager:
         self.storage = sm.StorageManager(FILENAME)
         self.storage.load_data(self.items)
         
-        
     def save_data(self):
         self.storage.save_data(self.items)
         
-#     def get_help(self):
-#         """
-#         Generates the list of commands available
-#         for T800.
-
-#         Returns
-#         -------
-#         None.
-
-#         """
-#         return """========================================
-# T800 can understand the following commands:
-# (Case-insensitive)
-
-#   todo DESCRIPTION 
-#     Adds a task to the list
-#     Example: todo read book
-#   deadline DESCRIPTION "by:" DEADLINE
-#     Adds a task with deadline to the list
-#     Example: deadline read book by: Tuesday
-#   done INDEX
-#     Marks the task at INDEX as 'done'
-#     Example: done 1
-#   delete INDEX
-#     Deletes item at the index
-#     Example: delete 1
-#   pending INDEX
-#     Reverts done item at index to 'pending'
-#     Example: pending 1
-#   exit
-#     Exits the application
-#   help
-#     Shows the help information
-#   progress
-#     Shows the progress of the current tasks
-#   mass TASK INDEX + **More if needed
-#     Performs either done, pending or delete
-#     of tasks simultaneously. 
-#     Space is required in between each task.
-#     Example: pending 1 3 4
-# ============================================"""
-    
     def add_item(self, user_input):
         """
         Adds a 'ToDo' type item into the local list.
@@ -297,7 +256,7 @@ class TaskManager:
         elif re.search("\Apending", command[:7], re.IGNORECASE):
             return self.__mass_execute(command.lower(), 8)
         else:
-            raise ex.InvalidMassInputError("INPUT: 'mass' + command + args**")
+            raise ex.InvalidMassInputError("INPUT: 'mass' + delete/done/pending + args**")
             
     def __mass_execute(self, command, strip_len):
         """
@@ -338,6 +297,44 @@ class TaskManager:
         else:
             raise ex.InvalidMassInputError("Nothing was done! Check your input.")
         
+    def find(self, user_input):
+        """
+        Search list of tasks for task matching user input. Search is
+        case-insensitive!
+
+        Parameters
+        ----------
+        user_input : STRING
+            User desired string to search for
+
+        Returns
+        -------
+        STRING
+            String with item(s) location or string informing of failure to find item.
+
+        """
+        item_locations = []
+        command = user_input[5:].strip()
+        
+        for index, item in enumerate(self.items):
+            if re.fullmatch(command, item.description, re.IGNORECASE):
+                item_locations.append(index+1)
+            else:
+                continue
+        
+        if not item_locations:
+            return ("Item not found in tasklist!")
+        else:
+            return ("Item(s) '{}' found at index {}". format(str(command.lower()), str(item_locations)))
+        
+    def clear_screen(self):
+        """
+        Wipes screen of all tasks
+
+        """
+        self.items = []
+        return ("All tasks removed from tasklist!")
+    
     def execute_command(self, command):
         """
         Main function to execute commands. All commmands are case-insensitive,
@@ -360,8 +357,7 @@ class TaskManager:
 
         """
         if re.search("\Ahelp", command[:4], re.IGNORECASE):
-            # return self.get_help()
-            return self.ui.get_help()
+            return ui.UserInterface.get_help()
         elif re.search("\Aprogress", command[:8], re.IGNORECASE):
             return self.get_current_progress()
         elif re.search("\Atodo", command[:4], re.IGNORECASE):
@@ -376,5 +372,9 @@ class TaskManager:
             return self.delete_item(command)
         elif re.search("\Amass", command[:4], re.IGNORECASE):
             return self.mass(command)
+        elif re.search("\Afind", command[:4], re.IGNORECASE):
+            return self.find(command)
+        elif re.search("\Awipe", command[:4], re.IGNORECASE):
+            return self.clear_screen()
         else:
             raise Exception('Command not recognized. Input \'help\' to see all available commands.')                 
