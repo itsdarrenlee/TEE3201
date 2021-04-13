@@ -47,14 +47,6 @@ class GUI:
         self.history_area.insert(1.0, '>>> ' + str(response) + '\n', status_format)
         self.history_area.insert(1.0, 'You said: ' + str(command) + '\n', 'normal_format')
         self.history_area.insert(1.0, current_time + '\n', 'normal_format')
-
-    def __string_splitter(self, arr, string, split_length):
-        if len(string) < split_length:
-            arr.append(string)
-            return arr
-        else:
-            arr.append(string[:split_length])
-            return self.string_splitter(arr, string[split_length:], split_length)
     
     def update_task_list(self, tasks):
         self.list_area.delete('1.0', END)  # clear the list area
@@ -84,24 +76,31 @@ STATUS | INDEX | DESCRIPTION      | DEADLINE
                 if isinstance(task, dl.Deadline):
                     to_print = str(task)[:6] + '|' + str(i+1).center(6) + '| ' + str(task)[6:20] + \
                     ' | ' + str(task.by)[:8] + '\n'
-                    self.list_area.insert(END, to_print, output_format)
+                    self.list_area.insert(END, to_print, output_format) # print first 8 chars of 'deadline' only
                     
                     if len(str(task.by)) > 8:
-                        deadline_arr = self.__string_splitter(deadline_arr, task.by, 8) [1:]
+                        deadline_arr = self.__string_splitter(deadline_arr, task.by, 8) [1:] # if longer than 8 char, split string
                 else:
                     to_print = str(task)[:6] + '|' + str(i+1).center(6) + '| ' + str(task)[6:20] + \
                     ' | ' + '-' + '\n'
-                    self.list_area.insert(END, to_print, output_format)
+                    self.list_area.insert(END, to_print, output_format) # print first 14 chars of 'deadline' only
             
                 if len(str(task.description)) > 14:
-                    desc_arr = self.__string_splitter(desc_arr, task.description, 14)[1:]
+                    desc_arr = self.__string_splitter(desc_arr, task.description, 14)[1:] # if longer than 14 char, split string
 
-            
                 for combination in itertools.zip_longest(desc_arr, deadline_arr, fillvalue=""):                    
                     to_print = " "*15 + combination[0].ljust(14) + " "*3 + combination[1].ljust(8)  + '\n'
-                    self.list_area.insert(END, to_print, output_format)
+                    self.list_area.insert(END, to_print, output_format) # iterate thru 2 lists simultanously, filling up diff with ""
             self.list_area.insert(END, """----------------------------------------------\n""")
-                      
+    
+    def __string_splitter(self, arr, string, split_length):
+        """ Recursively splits the string greedily in length specified by split_length"""
+        if len(string) < split_length:
+            arr.append(string)
+            return arr
+        else:
+            arr.append(string[:split_length])
+            return self.__string_splitter(arr, string[split_length:], split_length)
     
     def clear_input_box(self):
         self.input_box.delete(0, END)

@@ -4,20 +4,19 @@ import todo as td
 import exceptions as ex
 import storagemanager as sm
 
-filename = 'monty7.csv'
+FILENAME = 'monty7.csv'
 
 class TaskManager:
-    
-    filename = 'monty7.csv'
+    """
+    TaskManager class will execute task-related commands
+    """
+    FILENAME = 'monty7.csv'
     items = []
-    
     def __init__(self):
-        self.storage = sm.StorageManager(filename)
+        self.storage = sm.StorageManager(FILENAME)
         self.storage.load_data(self.items)
-    
     def save_data(self):
         self.storage.save_data(self.items)
-        
     def get_help(self):
         """
         Generates the list of commands available
@@ -239,15 +238,15 @@ T800 can understand the following commands:
 
         """
         try:
-            s = int(user_input[7:].strip())
-            if s == 0:
+            delete_string = int(user_input[7:].strip())
+            if delete_string == 0:
                 raise IndexError
-            deleted_item = self.items.pop(s-1)
+            deleted_item = self.items.pop(delete_string-1)
             return ("Task: " + "'" + deleted_item.description + "'" + " deleted from the list")
-        except IndexError:
-            raise IndexError("There is no list item at the number you typed!")
-        except ValueError:
-            raise ValueError("Only integers accepted as input")
+        except IndexError as ie:
+            raise IndexError("There is no list item at the number you typed!") from ie
+        except ValueError as ve:
+            raise ValueError("Only integers accepted as input") from ve
             
     def get_current_progress(self):
         """
@@ -288,17 +287,17 @@ T800 can understand the following commands:
         """
         command = user_input[5:].strip()
         if re.search("\Adelete", command[:6], re.IGNORECASE):
-            return self.__mass_execute(command.lower(), self.delete_item, 7)
+            return self.__mass_execute(command.lower(), 7)
         elif re.search("\Adone", command[:4], re.IGNORECASE):
-            return self.__mass_execute(command.lower(), self.mark_item_as_done, 5)
+            return self.__mass_execute(command.lower(), 5)
         elif re.search("\Apending", command[:7], re.IGNORECASE):
-            return self.__mass_execute(command.lower(), self.mark_item_as_pending, 8)
+            return self.__mass_execute(command.lower(), 8)
         else:
             raise ex.InvalidMassInputError("INPUT: 'mass' + command + args**")
             
-    def __mass_execute(self, command, function_name, strip_len):
+    def __mass_execute(self, command, strip_len):
         """
-        Executes 'function_name' with parameters 'command' sequentially.
+        Executes 'command' determined by strip_len, sequentially.
         Will execute all numbers regardless of whether input contains non-numerical
         input or not. 
         
@@ -331,7 +330,7 @@ T800 can understand the following commands:
         for i in str_arr:
             self.execute_command(back_string + str(i))
         if str_arr:
-            return ("Executed mass action '{}' on items {}!".format(back_string.strip(), [i for i in str_arr]))
+            return ("Executed mass action '{}' on items {}!".format(back_string.strip(), str_arr))
         else:
             raise ex.InvalidMassInputError("Nothing was done! Check your input.")
         

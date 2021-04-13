@@ -133,6 +133,7 @@ pythonenv*
 # Spyder project settings
 .spyderproject
 .spyproject
+.pylint.d
 
 # Rope project settings
 .ropeproject
