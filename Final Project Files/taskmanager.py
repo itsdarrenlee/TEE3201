@@ -323,7 +323,7 @@ class TaskManager:
                 continue
         
         if not item_locations:
-            return ("Item not found in tasklist!")
+            raise Exception("Item not found in tasklist!")
         else:
             return ("Item(s) '{}' found at index {}". format(str(command.lower()), str(item_locations)))
         
