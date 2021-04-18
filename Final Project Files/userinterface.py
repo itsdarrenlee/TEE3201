@@ -1,5 +1,3 @@
-# -*- coding: utf-8 -*-
-
 class UserInterface():
     
     def __init__(self):
@@ -55,7 +53,7 @@ T800 can understand the following commands:
     Shows the help information
   progress
     Shows the progress of the current tasks
-  mass TASK INDEX + **More if needed
+  mass TASK **INDEX
     Performs either done, pending or delete
     of tasks simultaneously. 
     Space is required in between each task.
