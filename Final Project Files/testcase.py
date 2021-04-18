@@ -1,6 +1,6 @@
 import unittest
 import exceptions as ex
-import taskmanager as tm     
+import taskmanager as tm
 
 # test class
 class TestSearch(unittest.TestCase):
@@ -43,7 +43,4 @@ class TestSearch(unittest.TestCase):
         
 # activate the test runner
 if __name__ == '__main__':
-    unittest.main()    
-    
-    
-    
+    unittest.main()

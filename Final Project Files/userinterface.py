@@ -64,4 +64,7 @@ T800 can understand the following commands:
     Searchs the task list for tasks
     matching your description.
     Results are case-insensitive!
+  wipe
+    Clears all tasks from the task pane. This action
+    is permanent!
 ==========================================""")

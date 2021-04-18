@@ -1,9 +1,9 @@
 import re
-import deadline as dl
-import todo as td
-import exceptions as ex
-import storagemanager as sm
+from todo import ToDo as td
+from deadline import Deadline as dl
+from storagemanager import StorageManager as sm
 
+import exceptions as ex
 import userinterface as ui
 
 FILENAME = 'monty7.csv'
@@ -16,7 +16,7 @@ class TaskManager:
     items = []
     
     def __init__(self):
-        self.storage = sm.StorageManager(FILENAME)
+        self.storage = sm(FILENAME)
         self.storage.load_data(self.items)
         
     def save_data(self):
@@ -43,7 +43,7 @@ class TaskManager:
         """
         command_parts = user_input.strip().split(' ', 1)
         try:
-            self.items.append(td.ToDo(command_parts[1], False))
+            self.items.append(td(command_parts[1], False))
             return ("New item: " + "'" + command_parts[1] + "'" + " added")
         except IndexError as ie:
             raise IndexError("INPUT: todo \"task\"") from ie
@@ -89,7 +89,7 @@ class TaskManager:
             elif not task:
                 raise ex.NoTaskError("Provide a task! INPUT: deadline \"task\" by: \"due date\"")
     
-            self.items.append(dl.Deadline(task, False, due))
+            self.items.append(dl(task, False, due))
             return ("New item: " + "'" + task + "'" + " added. " + "Deadline: " + "'" + due + "'")
         else:
             raise ex.InvalidDeadlineInput("Missing 'by' keyword! INPUT: deadline \"task\" by: \"due date\"")
@@ -224,8 +224,8 @@ class TaskManager:
 
         """
         status = {'Todo': 0, 'Deadline': 0}
-        status['Todo'] = td.ToDo.progress_check()
-        status['Deadline'] = dl.Deadline.progress_check()
+        status['Todo'] = td.progress_check()
+        status['Deadline'] = dl.progress_check()
         return("""Progress for this session:
     | ToDos: {} | Deadlines: {} |""".format(status['Todo'], status['Deadline']))
     
@@ -248,12 +248,13 @@ class TaskManager:
         A internal call to private method mass_execute.
 
         """
+            
         command = user_input[5:].strip()
-        if re.search("\Adelete", command[:6], re.IGNORECASE):
+        if command.startswith('delete'):
             return self.__mass_execute(command.lower(), 7)
-        elif re.search("\Adone", command[:4], re.IGNORECASE):
+        elif command.startswith('done'):
             return self.__mass_execute(command.lower(), 5)
-        elif re.search("\Apending", command[:7], re.IGNORECASE):
+        elif command.startswith('pending'):
             return self.__mass_execute(command.lower(), 8)
         else:
             raise ex.InvalidMassInputError("INPUT: 'mass' + delete/done/pending + args**")
@@ -356,25 +357,27 @@ class TaskManager:
         A call to associated command to execute with keyword parameters.
 
         """
-        if re.search("\Ahelp", command[:4], re.IGNORECASE):
+        string = command.lower()
+        
+        if "help" in string:
             return ui.UserInterface.get_help()
-        elif re.search("\Aprogress", command[:8], re.IGNORECASE):
+        elif "progress" in string:
             return self.get_current_progress()
-        elif re.search("\Atodo", command[:4], re.IGNORECASE):
-            return self.add_item(command)
-        elif re.search("\Adeadline", command[:8], re.IGNORECASE):
-            return self.add_deadline_item(command)
-        elif re.search("\Adone", command[:4], re.IGNORECASE):
-            return self.mark_item_as_done(command)
-        elif re.search("\Apending", command[:7], re.IGNORECASE):
-            return self.mark_item_as_pending(command)
-        elif re.search("\Adelete", command[:6], re.IGNORECASE):
-            return self.delete_item(command)
-        elif re.search("\Amass", command[:4], re.IGNORECASE):
-            return self.mass(command)
-        elif re.search("\Afind", command[:4], re.IGNORECASE):
-            return self.find(command)
-        elif re.search("\Awipe", command[:4], re.IGNORECASE):
+        elif "wipe" in string:
             return self.clear_screen()
+        elif string.startswith('done'):
+            return self.mark_item_as_done(command)
+        elif string.startswith('pending'):
+            return self.mark_item_as_pending(command)
+        elif string.startswith('delete'):
+            return self.delete_item(command)
+        elif string.startswith('todo'):
+            return self.add_item(command)
+        elif string.startswith('deadline'):
+            return self.add_deadline_item(command)
+        elif string.startswith('find'):
+            return self.find(command)
+        elif string.startswith('mass'):
+            return self.mass(command)            
         else:
             raise Exception('Command not recognized. Input \'help\' to see all available commands.')                 
