@@ -314,11 +314,13 @@ class TaskManager:
             String with item(s) location or string informing of failure to find item.
 
         """
+        
         item_locations = []
         command = user_input[5:].strip()
+        pattern = "(?:^|\W)" + str(command) + "(?:$|\W)"
         
         for index, item in enumerate(self.items):
-            if re.fullmatch(command, item.description, re.IGNORECASE):
+            if re.search(pattern, item.description, re.IGNORECASE):
                 item_locations.append(index+1)
             else:
                 continue
@@ -359,11 +361,11 @@ class TaskManager:
         """
         string = command.lower()
         
-        if "help" in string:
+        if string.startswith('help'):
             return ui.UserInterface.get_help()
-        elif "progress" in string:
+        elif string.startswith('progress'):
             return self.get_current_progress()
-        elif "wipe" in string:
+        elif string.startswith('wipe'):
             return self.clear_screen()
         elif string.startswith('done'):
             return self.mark_item_as_done(command)

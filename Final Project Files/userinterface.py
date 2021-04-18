@@ -65,6 +65,6 @@ T800 can understand the following commands:
     matching your description.
     Results are case-insensitive!
   wipe
-    Clears all tasks from the task pane. This action
-    is permanent!
+    Clears all tasks from the task pane.
+    This action is permanent!
 ==========================================""")

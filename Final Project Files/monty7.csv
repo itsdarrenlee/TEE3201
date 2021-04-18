@@ -1,0 +1,11 @@
+T,borrow book,True
+T,read book,True
+D,return book,True,Sunday
+T,apple,False
+T,APPLE,False
+T,Apple,False
+T,applepie,False
+T,pieapple,False
+T,1applepie1,False
+T,ate an apple pie,False
+T,pieapplepie,False
