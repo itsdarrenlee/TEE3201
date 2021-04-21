@@ -361,11 +361,11 @@ class TaskManager:
         """
         string = command.lower()
         
-        if string.startswith('help'):
+        if string == 'help':
             return ui.UserInterface.get_help()
-        elif string.startswith('progress'):
+        elif string == 'progress':
             return self.get_current_progress()
-        elif string.startswith('wipe'):
+        elif string == 'wipe':
             return self.clear_screen()
         elif string.startswith('done'):
             return self.mark_item_as_done(command)
